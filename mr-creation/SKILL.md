@@ -27,7 +27,7 @@ Prepare an MR description from repository evidence, then create the MR only when
 
 ## Template
 
-`markdown
+```markdown
 ## Ticket
 
 [<ticket number> - <ticket title>](https://ticket-url)
@@ -53,6 +53,6 @@ Prepare an MR description from repository evidence, then create the MR only when
 [After screenshot]
 
 <!-- Replace the sections above with "### Screen recording" and `[Screen recording]` when more appropriate. -->
-`
+```
 
 Omit empty optional subsections. Keep the final description concise and ready to paste or publish.
