@@ -1,5 +1,6 @@
 ---
 name: mr-creation
+version: 1.0.0
 description: Draft or create a merge request with a ticket link, a concise explanation of what changed and why, an evidence-based completion checklist, and before/after screenshots or a screen recording. Use when the user asks for an MR template, MR description, or to open/create a merge request.
 ---
 
