@@ -1,6 +1,6 @@
 ---
 name: mr-creation
-version: 1.2.0
+version: 1.3.0
 description: Draft or create a merge request with a conventional-commit title, a one-line TL;DR, a ticket link, a concise explanation of what changed and why, an evidence-based completion checklist, a blast radius line, and before/after screenshots or a screen recording. Use when the user asks for an MR template, MR description, or to open/create a merge request.
 ---
 
@@ -13,8 +13,10 @@ Prepare an MR description from repository evidence, then create the MR only when
 1. Inspect the current branch, target branch, commits, and diff. Account for every material change included in the MR.
 2. Resolve the ticket URL from the user's request, branch name, commits, or repository integrations. Read the ticket and copy its number and title into the link label using `<ticket number> - <ticket title>`. Ask for any value that cannot be resolved unambiguously.
 3. Write the MR title as a conventional commit message: `<type>(<optional scope>): <imperative summary in lowercase, no trailing period>`, e.g. `fix(editor): keep lane order stable when merging circuits`. Use standard types (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`, `perf`). The title becomes the commit message when the MR is merged with squash, so it must describe the whole MR, not a single commit.
-4. Write the TL;DR: one line, plain language, stating what this MR changes and why it matters. A human who reads nothing else should still get the MR.
-5. Assess the blast radius and output a single line in this exact style: `Blast radius: 🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high (brief human-readable reason)`. Base the level on how widely the change can affect behavior, shared dependencies, contracts, state, persistence, or external consumers. Keep the reason concrete, non-technical where possible, and under ~15 words.
+4. Write the TL;DR as one short sentence stating the behavior changed and why it matters. Prefer outcome language over implementation details. Aim for 20 words or fewer. A human who reads nothing else should still understand the MR.
+5. Assess the blast radius and place it immediately below the TL;DR using this exact style:
+   `> **Blast radius** <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> · <affected surface> · <concrete scope>`
+   Base the level on how widely the change can affect behavior, shared dependencies, contracts, state, persistence, or external consumers. Make the affected surface human-readable and prefer measurable scope when available, e.g. `2 mappings`, `one endpoint`, `all projects`, or `shared auth layer`. Avoid implementation-level wording such as cells, lines, or files when a behavior-level description is possible.
 6. Write a short explanation of what the MR does and why it is needed. Describe behavior and intent rather than listing files. Format for scanning: short bullets over paragraph blocks, bold key words (component, file, API, error message), and no text chunk longer than a few lines. Stay brief: the goal is a human grasps the MR quickly, not exhaustive coverage of the diff.
 7. Build the key-changes checklist from the diff:
    - Each item names one material behavior change from the diff, nothing else.
@@ -33,9 +35,8 @@ Prepare an MR description from repository evidence, then create the MR only when
 ## Template
 
 ```markdown
-**TL;DR:** <One line, plain language: what this MR changes and why.>
-
-Blast radius: <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> (<brief human-readable reason>)
+> **TL;DR** <What changes + why it matters>  
+> **Blast radius** <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> · <affected surface> · <concrete scope>
 
 ## Ticket
 
