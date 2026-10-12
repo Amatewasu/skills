@@ -4,10 +4,10 @@ My personal agent skills — small, reusable disciplines I plug into my coding a
 
 ## Skills
 
-| Skill | Version | What it does |
-| --- | --- | --- |
-| [mr-creation](./mr-creation/SKILL.md) | 1.0.0 | Draft or create a merge request with a ticket link, a concise what/why, an evidence-based completion checklist, and before/after preview evidence. |
-| [screen-recording](./screen-recording/SKILL.md) | 0.0.1 | Record concise screen recordings for humans, scoped to only the actions the change makes relevant - shot list from the diff, no session noise, duration budget. |
+| Skill | What it does |
+| --- | --- |
+| [mr-creation](./mr-creation/SKILL.md) | Draft or create a merge request with a ticket link, a concise what/why, an evidence-based completion checklist, and before/after preview evidence. |
+| [screen-recording](./screen-recording/SKILL.md) | Record concise screen recordings for humans, scoped to only the actions the change makes relevant - shot list from the diff, no session noise, duration budget. |
 
 ## Installation
 
