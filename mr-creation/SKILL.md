@@ -1,6 +1,6 @@
 ---
 name: mr-creation
-version: 1.3.2
+version: 1.4.0
 description: Draft or create a merge request with a conventional-commit title, a one-line TL;DR, a ticket link, a concise explanation of what changed and why, an evidence-based completion checklist, a blast radius line, and before/after screenshots or a screen recording. Use when the user asks for an MR template, MR description, or to open/create a merge request.
 ---
 
@@ -17,7 +17,7 @@ Prepare an MR description from repository evidence, then create the MR only when
 5. Assess the blast radius and place it below the TL;DR, separated from it by one blank line so the TL;DR and the blast radius render as two distinct quote blocks (quoting one must not pull in the other), using this exact style:
    `> **Blast radius** <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> · <affected surface> · <concrete scope>`
    Base the level on how widely the change can affect behavior, shared dependencies, contracts, state, persistence, or external consumers. Make the affected surface human-readable and prefer measurable scope when available, e.g. `2 mappings`, `one endpoint`, `all projects`, or `shared auth layer`. Avoid implementation-level wording such as cells, lines, or files when a behavior-level description is possible.
-6. Write a short explanation of what the MR does and why it is needed. Describe behavior and intent rather than listing files. Format for scanning: short bullets over paragraph blocks, bold key words (component, file, API, error message), and no text chunk longer than a few lines. Stay brief: the goal is a human grasps the MR quickly, not exhaustive coverage of the diff.
+6. Write a short explanation of what the MR does and why it is needed. Describe behavior and intent rather than listing files. For `fix(...)` MRs, open the section with the **root cause**: the mechanism in the existing code that produced the bug — the code path and the decision in it — in one to three lines. The symptom is context, not the root cause: without the mechanism, a reviewer cannot tell whether the fix removes the cause or only the symptom. Format for scanning: short bullets over paragraph blocks, bold key words (component, file, API, error message), and no text chunk longer than a few lines. Stay brief: the goal is a human grasps the MR quickly, not exhaustive coverage of the diff.
 7. Build the key-changes checklist from the diff:
    - Each item names one material behavior change from the diff, nothing else.
    - Keep the list brief and focused on material behavior.
@@ -27,6 +27,7 @@ Prepare an MR description from repository evidence, then create the MR only when
 9. When a Mermaid diagram helps a human understand the change faster than prose — a flow, state machine, sequence, or architecture shift — include one in the explanation section. Diagrams are welcome but optional; skip them when the change is simple or localized.
 10. Add preview evidence for user-facing visual changes:
    - Prefer paired before and after screenshots.
+   - When the fix is already on the branch, capture the before on the pre-fix code — the parent commit, or the pre-fix version of the changed file checked out temporarily — then restore it.
    - Use a screen recording when motion or a multi-step interaction communicates the change better.
    - When preview media is not ready, insert explicit replaceable placeholders such as `[Before screenshot]`, `[After screenshot]`, or `[Screen recording]`.
 11. Produce the Markdown using the template below. Use only its sections; do not add a Verification section. Never invent ticket URLs, ticket numbers, ticket titles, completed work, or preview assets. Also state the proposed conventional-commit MR title above the Markdown so it is ready to paste into the title field.
@@ -44,6 +45,8 @@ Prepare an MR description from repository evidence, then create the MR only when
 [<ticket number> - <ticket title>](https://ticket-url)
 
 ## What does this MR do and why?
+
+**Root cause** (fix MRs only): <the mechanism in the existing code that produced the bug — the code path and the decision in it — in one to three lines>
 
 <Short explanation of the behavior changed and its purpose. Prefer short bullets with **bold key words**; no long paragraph blocks. Optionally embed a Mermaid diagram here when it clarifies a flow, sequence, or architecture.>
 
