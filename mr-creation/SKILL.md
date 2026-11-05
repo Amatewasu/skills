@@ -1,64 +1,55 @@
 ---
 name: mr-creation
-version: 1.4.0
-description: Draft or create a merge request with a conventional-commit title, a one-line TL;DR, a ticket link, a concise explanation of what changed and why, an evidence-based completion checklist, a blast radius line, and before/after screenshots or a screen recording. Use when the user asks for an MR template, MR description, or to open/create a merge request.
+version: 1.5.0
+description: Draft a concise, evidence-based merge request description with a conventional-commit title, ticket, blast radius, key changes, and visual evidence when relevant. Use when the user asks for an MR template or description, or asks to open or create an MR.
 ---
 
 # Merge Request Creation
 
-Prepare an MR description from repository evidence, then create the MR only when the user explicitly asks to publish or open it.
+Write for a teammate who knows the product and is seeing this change for the first time. They should understand the outcome in one sentence and know where to focus their review after a quick scan.
+
+## Editorial rules
+
+- For a routine MR, aim for 100 to 150 words of prose or fewer, excluding headings, ticket links, and media. A simple fix can be much shorter. Use more space when a reviewer needs it to understand a migration, compatibility issue, or consequential trade-off.
+- Give each section one job. The TL;DR states the outcome and why it matters. The blast radius names the reach. The explanation supplies the cause or rationale. The checklist identifies concrete behaviors a reviewer can verify.
+- Use familiar product terms and short sentences. Name a function, file, or API only when it helps the reviewer locate a cause or inspect a contract. For example, prefer “Reopening a draft keeps its lane order” to “Improve lane-order persistence handling.”
+- Before returning the draft, cut repeated claims, file inventories, routine plumbing, and commentary the diff already makes obvious. Keep any detail whose removal would change how someone understands or reviews the MR.
 
 ## Workflow
 
-1. Inspect the current branch, target branch, commits, and diff. Account for every material change included in the MR.
-2. Resolve the ticket URL from the user's request, branch name, commits, or repository integrations. Read the ticket and copy its number and title into the link label using `<ticket number> - <ticket title>`. Ask for any value that cannot be resolved unambiguously.
-3. Write the MR title as a conventional commit message: `<type>(<optional scope>): <imperative summary in lowercase, no trailing period>`, e.g. `fix(editor): keep lane order stable when merging circuits`. Use standard types (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`, `perf`). The title becomes the commit message when the MR is merged with squash, so it must describe the whole MR, not a single commit.
-4. Write the TL;DR as one short sentence stating the behavior changed and why it matters. Prefer outcome language over implementation details. Aim for 20 words or fewer. A human who reads nothing else should still understand the MR. Keep the TL;DR strictly about what changes and why: never mention the blast radius, risk level, affected scope, or affected surface — all of that belongs exclusively in the dedicated Blast radius line, not duplicated or paraphrased here.
-5. Assess the blast radius and place it below the TL;DR, separated from it by one blank line so the TL;DR and the blast radius render as two distinct quote blocks (quoting one must not pull in the other), using this exact style:
-   `> **Blast radius** <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> · <affected surface> · <concrete scope>`
-   Base the level on how widely the change can affect behavior, shared dependencies, contracts, state, persistence, or external consumers. Make the affected surface human-readable and prefer measurable scope when available, e.g. `2 mappings`, `one endpoint`, `all projects`, or `shared auth layer`. Avoid implementation-level wording such as cells, lines, or files when a behavior-level description is possible.
-6. Write a short explanation of what the MR does and why it is needed. Describe behavior and intent rather than listing files. For `fix(...)` MRs, open the section with the **root cause**: the mechanism in the existing code that produced the bug — the code path and the decision in it — in one to three lines. The symptom is context, not the root cause: without the mechanism, a reviewer cannot tell whether the fix removes the cause or only the symptom. Format for scanning: short bullets over paragraph blocks, bold key words (component, file, API, error message), and no text chunk longer than a few lines. Stay brief: the goal is a human grasps the MR quickly, not exhaustive coverage of the diff.
-7. Build the key-changes checklist from the diff:
-   - Each item names one material behavior change from the diff, nothing else.
-   - Keep the list brief and focused on material behavior.
-   - Verification statements ("typecheck passes", "tests pass locally") are never checklist items; mention verification only when it carries special meaning here (tests skipped, known flaky test, unusual setup required).
-   - Use `- [x]` for changes present in the branch, `- [ ]` for known remaining work.
-8. List points worth challenging: decisions, trade-offs, or assumptions in the change a reviewer could legitimately question, one bullet each. Only genuinely debatable points; omit the section when there are none.
-9. When a Mermaid diagram helps a human understand the change faster than prose — a flow, state machine, sequence, or architecture shift — include one in the explanation section. Diagrams are welcome but optional; skip them when the change is simple or localized.
-10. Add preview evidence for user-facing visual changes:
-   - Prefer paired before and after screenshots.
-   - When the fix is already on the branch, capture the before on the pre-fix code — the parent commit, or the pre-fix version of the changed file checked out temporarily — then restore it.
-   - Use a screen recording when motion or a multi-step interaction communicates the change better.
-   - When preview media is not ready, insert explicit replaceable placeholders such as `[Before screenshot]`, `[After screenshot]`, or `[Screen recording]`.
-11. Produce the Markdown using the template below. Use only its sections; do not add a Verification section. Never invent ticket URLs, ticket numbers, ticket titles, completed work, or preview assets. Also state the proposed conventional-commit MR title above the Markdown so it is ready to paste into the title field.
-12. When the user explicitly requested MR creation, determine the repository host and target branch, create the MR with the prepared title and description, and return its URL. Otherwise, return the draft only.
+1. **Inspect the evidence.** Check the source and target branches, commits, and full diff. Account for every material behavior change. Group edits that produce one outcome.
+2. **Resolve the ticket.** Find and read it using the request, branch, commits, or repository integration. Use the exact label `<ticket number> - <ticket title>`. Ask for any value that remains ambiguous.
+3. **Write the title.** Use `<type>(<optional scope>): <imperative summary>` in lowercase, with no trailing period. Choose `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`, or `perf`. Describe the whole MR so the title works as its squash commit.
+4. **Write the opening lines.** Aim for 20 words or fewer in the TL;DR. Reserve risk and affected scope for the blast radius. Choose its level based on reach across behavior, shared dependencies, contracts, persisted state, or external consumers. Name the affected surface in human terms and quantify it when evidence allows. Keep one blank line between the quote blocks.
+5. **Explain what needs context.** For a fix, open with **Root cause** and identify the code path and decision that produced the symptom. One sentence is usually enough. Add rationale only where it helps explain the chosen behavior. Include a Mermaid diagram only if it makes a flow or state change quicker to grasp than prose.
+6. **Build the checklist from the diff.** Use one item per material behavior, usually one to three items. Mark confirmed changes `[x]` and known remaining work `[ ]`. Keep routine test and typecheck results out. Mention an unusual verification gap briefly in the explanation when it affects review.
+7. **Include optional sections selectively.** Add *Points worth challenging* only for a real decision a reviewer could reasonably contest. Add *Preview* for user-facing visual changes. Prefer paired screenshots of the same scenario, capturing the before state from pre-fix code and restoring the branch afterward. Use a recording for motion or multi-step interactions. If media is pending, use explicit placeholders.
+8. **Return or publish.** Put the proposed title above the Markdown body. Use only the sections below and omit inapplicable optional sections. Never invent ticket details, completed work, or media. Create the MR only when the user explicitly asks to open or publish it. Confirm the host and target branch from repository evidence, then return the MR URL.
 
 ## Template
 
 ```markdown
-> **TL;DR** <What changes + why it matters>
+> **TL;DR** <What changes and why it matters, in one sentence>
 
 > **Blast radius** <🟢 Low / 🟡 Medium / 🟠 High / 🔴 Very high> · <affected surface> · <concrete scope>
 
 ## Ticket
 
-[<ticket number> - <ticket title>](https://ticket-url)
+[<ticket number> - <ticket title>](<ticket URL>)
 
 ## What does this MR do and why?
 
-**Root cause** (fix MRs only): <the mechanism in the existing code that produced the bug — the code path and the decision in it — in one to three lines>
+**Root cause** <For fixes, identify the code path and decision that caused the bug.>
 
-<Short explanation of the behavior changed and its purpose. Prefer short bullets with **bold key words**; no long paragraph blocks. Optionally embed a Mermaid diagram here when it clarifies a flow, sequence, or architecture.>
+<Add only the context needed to understand the change.>
 
 ## Key changes
 
-- [x] <Verified completed change>
-- [x] <Verified completed change>
-- [ ] <Known remaining work, when applicable>
+- [x] <Concrete behavior confirmed by the diff>
 
 ## Points worth challenging
 
-- <Decision, trade-off, or assumption a reviewer could legitimately question>
+- <A genuine trade-off and its consequence>
 
 ## Preview
 
@@ -69,8 +60,6 @@ Prepare an MR description from repository evidence, then create the MR only when
 ### After
 
 [After screenshot]
-
-<!-- Replace the sections above with "### Screen recording" and `[Screen recording]` when more appropriate. -->
 ```
 
-Omit empty optional subsections, including Points worth challenging when nothing is genuinely debatable. Keep the final description concise and ready to paste or publish.
+For a recording, replace the Before and After subsections with `### Screen recording` and `[Screen recording]`.
